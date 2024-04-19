@@ -2,10 +2,13 @@ package service
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func addDays(date time.Time, days int) time.Time {
@@ -55,7 +58,7 @@ func getNextYear(now time.Time, date string) (string, error) {
 	return newDate.Format("20060102"), nil
 }
 
-func NextDate(now time.Time, date string, repeat string) (string, error) {
+func (s *Service) NextDate(now time.Time, date string, repeat string) (string, error) {
 	if strings.HasPrefix(repeat, "d") {
 		return getNextDay(now, date, repeat)
 	} else if strings.Contains(repeat, "y") {
@@ -64,30 +67,29 @@ func NextDate(now time.Time, date string, repeat string) (string, error) {
 	return "", errors.New("repeat wrong format")
 }
 
-func NextDateHandler(w http.ResponseWriter, r *http.Request) {
-	now := r.FormValue("now")
-	date := r.FormValue("date")
-	repeat := r.FormValue("repeat")
+func (s *Service) NextDateHandler(c *gin.Context) {
+	now := c.Query("now")
+	date := c.Query("date")
+	repeat := c.Query("repeat")
+
+	log.Println(now, date, repeat)
 
 	if now == "" || date == "" || repeat == "" {
-		http.Error(w, "Missing parameters", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Отсутствуют обязательные параметры"})
 		return
 	}
 
-	// Отформатируйте now в time.Time
 	parsedNow, err := time.Parse("20060102", now)
 	if err != nil {
-		http.Error(w, "Invalid 'now' parameter", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Неправильный параметр 'now'"})
 		return
 	}
 
-	// Вызовите функцию NextDate, передавая только день и год
-	nextDate, err := NextDate(parsedNow, date, repeat)
+	nextDate, err := s.NextDate(parsedNow, date, repeat)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(nextDate))
+	c.String(http.StatusOK, nextDate) // Исправлено на возвращение строки без JSON-обёртки
 }
