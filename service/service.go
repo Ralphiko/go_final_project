@@ -1,46 +1,33 @@
 package service
 
 import (
-	"time"
-
 	"github.com/Ralphiko/go_final_project/model"
 	"github.com/Ralphiko/go_final_project/repository"
+	"github.com/gin-gonic/gin"
 )
 
+type Authorization interface {
+	CheckAuth(c *gin.Context)
+	ParseToken(token string) (bool, error)
+}
+type TodoTask interface {
+	NextDate(nd model.NextDate) (string, error)
+	CreateTask(task model.Task) (int64, error)
+	GetTasks(search string) (model.ListTasks, error)
+	GetTaskById(id string) (model.Task, error)
+	UpdateTask(task model.Task) error
+	TaskDone(id string) error
+	DeleteTask(id string) error
+}
+
 type Service struct {
-	Repository repository.Repository
+	Authorization
+	TodoTask
 }
 
-func NewService(repo repository.Repository) *Service {
+func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		Repository: repo,
+		Authorization: NewAuthService(repository.Auth),
+		TodoTask:      NewTodoTaskService(repository.TodoTask),
 	}
-}
-
-func (s *Service) CreateTask(task model.Task) (int64, error) {
-	return s.Repository.CreateTask(task)
-}
-
-func (s *Service) GetTaskByID(id string) (model.Task, error) {
-	return s.Repository.GetTaskById(id)
-}
-
-func (s *Service) SearchTasks(search string) ([]model.Task, error) {
-	return s.Repository.GetTasks(search)
-}
-
-func (s *Service) UpdateTask(task model.Task) error {
-	return s.Repository.UpdateTask(task)
-}
-
-func (s *Service) DeleteTask(id string) error {
-	return s.Repository.DeleteTask(id)
-}
-
-func (s *Service) MarkTaskAsDone(id string) error {
-	return s.Repository.TaskDone(id)
-}
-
-func (s *Service) GetNextDate(now time.Time, date string, repeat string) (string, error) {
-	return s.NextDate(now, date, repeat)
 }

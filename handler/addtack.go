@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"net/http"
@@ -7,6 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
+
+type Error struct {
+	Message string `json:"error"`
+}
+
+func NewResponseError(c *gin.Context, statusCode int, message string) {
+	c.AbortWithStatusJSON(statusCode, Error{Message: message})
+}
+
+func (h *Handler) login(c *gin.Context) {
+	h.service.Authorization.CheckAuth(c)
+}
 
 const (
 	NewND       = "Получили объект NextDate со следующими данными: date: %s, now: %s, repeat: %s"
