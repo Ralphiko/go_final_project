@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	app "github.com/Ralphiko/go_final_project"
 	"github.com/Ralphiko/go_final_project/handler"
 	"github.com/Ralphiko/go_final_project/repository"
 	"github.com/Ralphiko/go_final_project/service"

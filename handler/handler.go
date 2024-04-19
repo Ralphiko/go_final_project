@@ -54,7 +54,7 @@ func (h *Handler) indexPage(c *gin.Context) {
 			Name:     "token",
 			Value:    "",
 			Path:     "/",
-			MaxAge:   -1, // Устанавливаем отрицательное время жизни для удаления куки
+			MaxAge:   -1,
 			HttpOnly: true,
 		}
 		http.SetCookie(c.Writer, deleteCookie)

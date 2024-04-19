@@ -31,7 +31,7 @@ type AuthSqlite struct {
 }
 
 type User struct {
-	Login    string `json:"-"` //не используем. но, может когда-то пригодиться? =) не использовать же ЦЕЛУЮ структуру из-за одного только поля?!
+	Login    string `json:"-"`
 	Password string `json:"password"`
 }
 
@@ -95,7 +95,7 @@ func (a *AuthSqlite) CheckAuth(c *gin.Context) {
 
 func GenerateJWT(username string) (string, error) {
 	if username == "" {
-		username = "default" // функционал на будующее, если будут использоваться пользователи. А пока в токене будем возвращать дефолтное имя
+		username = "default"
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &myClaims{
 		jwt.StandardClaims{
