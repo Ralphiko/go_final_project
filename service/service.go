@@ -2,13 +2,16 @@ package service
 
 import (
 	"time"
+
+	"github.com/Ralphiko/go_final_project/model"
+	"github.com/Ralphiko/go_final_project/repository"
 )
 
 type Service struct {
-	Repository model.Repository
+	Repository repository.Repository
 }
 
-func NewService(repo model.Repository) *Service {
+func NewService(repo repository.Repository) *Service {
 	return &Service{
 		Repository: repo,
 	}

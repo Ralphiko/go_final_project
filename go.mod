@@ -4,6 +4,7 @@ go 1.21.3
 
 require (
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	modernc.org/sqlite v1.29.6
 )
@@ -44,7 +45,6 @@ require (
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/sys v0.16.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
