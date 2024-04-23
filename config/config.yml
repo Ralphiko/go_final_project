@@ -1,6 +1,6 @@
 Port: "7540"
 DB:
-  SQLDriver: "sqlite3"
+  SQLDriver: "sqlite"
   DBFile: "./db/scheduler.db"
   SQLCreateTables: >
     CREATE TABLE IF NOT EXISTS scheduler (

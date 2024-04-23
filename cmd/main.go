@@ -8,9 +8,9 @@ import (
 	"github.com/Ralphiko/go_final_project/repository"
 	"github.com/Ralphiko/go_final_project/service"
 	"github.com/gin-gonic/gin"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	_ "modernc.org/sqlite"
 )
 
 const (

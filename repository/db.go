@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	_ "modernc.org/sqlite"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 	DbNameFromEnvironment = "Получаем имя БД из окружения..."
 	DbNameSet             = "Имя БД задано -- %v"
 	NotSetUsingDefault    = "Имя БД не задано. Будем использовать из конфига -- %v"
-	SqlDriver             = "sqlite3"
+	SqlDriver             = "sqlite"
 	FailedToOpenDatabase  = "Не удалось открыть БД: "
 	TableCreationError    = "Упс!.. Ошбика при создании таблицы: "
 	IndexCreationError    = "Упс!.. Ошбика при создании индекса: "
@@ -29,11 +29,12 @@ type Config struct {
 }
 
 func GetDB() *sqlx.DB {
-	dbname, err := CheckDb()
+	dbName, err := CheckDb()
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	return sqlx.MustConnect(viper.Get("DB.SQLDriver").(string), dbname)
+	sqlDriver := viper.GetString("DB.SQLDriver")
+	return sqlx.MustConnect(sqlDriver, dbName)
 }
 
 func CheckDb() (string, error) {
