@@ -1,4 +1,3 @@
-// +build cgo
 module github.com/Ralphiko/go_final_project
 
 go 1.21.3

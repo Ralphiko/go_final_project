@@ -11,38 +11,28 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const (
-	EnvDbfile             = "TODO_DBFILE"
-	DbNameFromEnvironment = "Получаем имя БД из окружения..."
-	DbNameSet             = "Имя БД задано -- %v"
-	NotSetUsingDefault    = "Имя БД не задано. Будем использовать из конфига -- %v"
-	SqlDriver             = "sqlite"
-	FailedToOpenDatabase  = "Не удалось открыть БД: "
-	TableCreationError    = "Упс!.. Ошбика при создании таблицы: "
-	IndexCreationError    = "Упс!.. Ошбика при создании индекса: "
-	TaskTable             = "scheduler"
-)
-
 type Config struct {
 	SQLDriver string
 	DBFile    string
 }
 
-func GetDB() *sqlx.DB {
+func DB() *sqlx.DB {
 	dbName, err := CheckDb()
 	if err != nil {
 		logrus.Fatal(err)
+		return nil
 	}
 	sqlDriver := viper.GetString("DB.SQLDriver")
 	return sqlx.MustConnect(sqlDriver, dbName)
 }
 
 func CheckDb() (string, error) {
-	dbName := EnvDBFILE(EnvDbfile)
+	dbName := viper.Get("DB.DBFile").(string)
 
 	appPath, err := os.Executable()
 	if err != nil {
 		logrus.Fatal(err)
+		return "", err
 	}
 	dbFile := filepath.Join(filepath.Dir(appPath), dbName)
 	_, err = os.Stat(dbFile)
@@ -52,34 +42,18 @@ func CheckDb() (string, error) {
 	return dbName, nil
 }
 
-func EnvDBFILE(key string) string {
-	logrus.Println(DbNameFromEnvironment)
-	dbName := os.Getenv(key)
-	if len(dbName) == 0 {
-		dbName = viper.Get("DB.DBFile").(string)
-		logrus.Warnf(NotSetUsingDefault, dbName)
-	} else {
-		logrus.Printf(DbNameSet, dbName)
-	}
-	return dbName
-}
-
 func installDB(dbName string) {
-	db, err := sql.Open(SqlDriver, dbName)
+	db, err := sql.Open("sqlite", dbName)
 	if err != nil {
-		logrus.Fatal(FailedToOpenDatabase, err)
+		logrus.Fatal("бд не открылось: ", err)
+		return
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	createTableSQL := viper.Get("DB.SQLCreateTables").(string)
 	_, err = db.Exec(createTableSQL)
 	if err != nil {
-		logrus.Fatal(TableCreationError, err)
-	}
-
-	createIndexSQL := viper.Get("DB.SQLCreateIndexes").(string)
-	_, err = db.Exec(createIndexSQL)
-	if err != nil {
-		logrus.Fatal(IndexCreationError, err)
+		logrus.Fatal("создание таблицы: ", err)
+		return
 	}
 }
