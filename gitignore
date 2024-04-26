@@ -1,2 +1,8 @@
-.idea/vcs.xml
 *.db
+.idea/
+dataSources/
+dataSources.local.xml
+go_final_project.iml
+modules.xml
+vcs.xml
+workspace.xml
