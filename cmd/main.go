@@ -35,7 +35,7 @@ func main() {
 		logrus.Infof(serverStartMessage+" с конфигом %+v", port, viper.AllSettings())
 	}
 
-	newRepository := repository.NewRepository(repository.DB())
+	newRepository := repository.NewRepository(repository.GetDB())
 	newService := service.NewService(newRepository)
 	newHandler := handler.NewHandler(newService)
 	newServer := new(app.Server)
@@ -59,7 +59,7 @@ func existDBDir() error {
 }
 
 func initConfig() error {
-	viper.AddConfigPath("config")
-	viper.SetConfigName("config")
+	viper.AddConfigPath("storage")
+	viper.SetConfigName("storage")
 	return viper.ReadInConfig()
 }

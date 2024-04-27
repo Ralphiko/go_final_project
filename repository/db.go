@@ -16,7 +16,7 @@ type Config struct {
 	DBFile    string
 }
 
-func DB() *sqlx.DB {
+func GetDB() *sqlx.DB {
 	dbName, err := CheckDb()
 	if err != nil {
 		logrus.Fatal(err)
